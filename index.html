@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <script type="text/javascript">
+        (function() {
+            function initSbraiMail() {
+                // Initializing with your Public Key
+                emailjs.init('A0NfI--Brso6kQ4Kp');
+            }
+            initSbraiMail();
+        })();
+    </script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --brand-orange: #f97316; }
+        body { font-family: 'Inter', sans-serif; background-color: #050505; color: #fff; overflow-x: hidden; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        
+        @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        .marquee-content { display: flex; width: 200%; animation: scroll 30s linear infinite; }
+
+        .reveal { animation: reveal 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
+        @keyframes reveal {
+            from { opacity: 0; transform: translateY(30px); filter: blur(10px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -5; pointer-events: none; }
+
+        #toast {
+            visibility: hidden;
+            min-width: 280px;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            color: #fff;
+            text-align: center;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px;
+            position: fixed;
+            z-index: 100;
+            right: 30px;
+            top: 30px;
+            font-size: 14px;
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            transform: translateX(120%);
+        }
+        #toast.show { visibility: visible; transform: translateX(0); }
+        #toast.success { border-left: 4px solid #f97316; }
+        #toast.error { border-left: 4px solid #ef4444; }
+    </style>
+    <title>Sbrai Solutions | Elite Access</title>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-orange-500/30">
+
+    <canvas id="particleCanvas"></canvas>
+    <div id="toast"></div>
+
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl h-[500px] bg-orange-600/5 blur-[120px] rounded-full -z-10"></div>
+
+    <nav class="p-8 flex justify-between items-center reveal" style="animation-delay: 0.1s;">
+        <div class="flex-1">
+            <img src="assets/images/sbri.jpeg" alt="Sbrai" class="h-10 w-auto">
+        </div>
+        <div class="flex items-center space-x-6">
+            <button id="audioToggle" class="p-2 text-gray-500 hover:text-orange-500 transition-all active:scale-90 border border-white/5 rounded-full bg-white/5 backdrop-blur-sm">
+                <svg id="audioIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><path id="audioWaves" d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" opacity="0"></path></svg>
+            </button>
+        </div>
+    </nav>
+
+    <main class="flex-grow flex flex-col items-center justify-center px-6 text-center reveal" style="animation-delay: 0.3s;">
+        <h1 class="text-6xl md:text-9xl font-serif italic tracking-tight mb-6">
+            Sbrai <span class="text-orange-500">Solutions</span>
+        </h1>
+        
+        <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto font-light leading-relaxed mb-12">
+            The architect of premium eCommerce. We are currently curating an exclusive list of merchants for our end-of-April debut.
+        </p>
+
+        <div id="timer" class="flex gap-4 md:gap-10 mb-16">
+            <div class="flex flex-col"><span id="days" class="text-4xl md:text-6xl font-serif font-bold text-orange-500">00</span><span class="text-[10px] uppercase tracking-[0.3em] text-gray-500">Days</span></div>
+            <div class="flex flex-col"><span id="hours" class="text-4xl md:text-6xl font-serif font-bold text-orange-500">00</span><span class="text-[10px] uppercase tracking-[0.3em] text-gray-500">Hours</span></div>
+            <div class="flex flex-col"><span id="minutes" class="text-4xl md:text-6xl font-serif font-bold text-orange-500">00</span><span class="text-[10px] uppercase tracking-[0.3em] text-gray-500">Mins</span></div>
+            <div class="flex flex-col"><span id="seconds" class="text-4xl md:text-6xl font-serif font-bold text-orange-500">00</span><span class="text-[10px] uppercase tracking-[0.3em] text-gray-500">Secs</span></div>
+        </div>
+
+        <form id="form" class="w-full max-w-lg px-4 md:px-0">
+    <div class="relative group">
+        <div class="absolute -inset-0.5 bg-orange-500 rounded-2xl md:rounded-full blur opacity-10 group-focus-within:opacity-30 transition"></div>
+        
+        <div class="relative flex flex-col md:flex-row bg-white rounded-2xl md:rounded-full p-1.5 overflow-hidden gap-2 md:gap-0">
+            <input 
+                id="email"
+                name="email" 
+                type="email" 
+                placeholder="Enter your email..." 
+                class="bg-transparent border-none outline-none px-6 py-4 md:py-3 flex-grow text-black placeholder:text-gray-400 text-base md:text-sm font-medium"
+                required
+            >
+            <button id="button" type="submit" class="bg-black text-white px-8 py-4 md:py-3 rounded-xl md:rounded-full font-bold text-xs uppercase tracking-widest hover:bg-orange-600 transition-colors whitespace-nowrap">
+                Join The Wait-List
+            </button>
+        </div>
+    </div>
+</form>
+    </main>
+
+    <footer class="w-full py-10 border-t border-white/5 bg-black/50 backdrop-blur-sm">
+        <div class="relative flex overflow-x-hidden">
+            <div class="marquee-content py-2">
+                <span class="mx-8 text-[11px] uppercase tracking-[0.5em] text-gray-500 whitespace-nowrap">INTELLIGENT HUB &nbsp; • &nbsp; GLOBAL SCALE &nbsp; • &nbsp; SBRAI SOLUTIONS &nbsp; • &nbsp; LUXURY COMMERCE &nbsp; • &nbsp; END OF APRIL 2026 &nbsp; • &nbsp; </span>
+                <span class="mx-8 text-[11px] uppercase tracking-[0.5em] text-gray-500 whitespace-nowrap">INTELLIGENT HUB &nbsp; • &nbsp; GLOBAL SCALE &nbsp; • &nbsp; SBRAI SOLUTIONS &nbsp; • &nbsp; LUXURY COMMERCE &nbsp; • &nbsp; END OF APRIL 2026 &nbsp; • &nbsp; </span>
+            </div>
+        </div>
+    </footer>
+
+    <audio id="bgAmbient" loop>
+        <source src="https://image2url.com/r2/default/audio/1771839842069-be98b374-3c6a-430d-acf5-59460b58f3e2.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // 1. Particle Effect Script
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.opacity = Math.random() * 0.5;
+            }
+            update() {
+                this.x += this.speedX; this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0; if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0; if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(249, 115, 22, ${this.opacity})`;
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+        function initParticles() { particles = []; for (let i = 0; i < 100; i++) particles.push(new Particle()); }
+        function animateParticles() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animateParticles); }
+        window.addEventListener('resize', resize); resize(); initParticles(); animateParticles();
+
+        // 2. Audio Control Script
+        const audio = document.getElementById('bgAmbient');
+        const audioBtn = document.getElementById('audioToggle');
+        const audioWaves = document.getElementById('audioWaves');
+        let isPlaying = false;
+        audioBtn.addEventListener('click', () => {
+            if (!isPlaying) { audio.play(); audioWaves.setAttribute('opacity', '1'); } 
+            else { audio.pause(); audioWaves.setAttribute('opacity', '0'); }
+            isPlaying = !isPlaying;
+        });
+
+        // 3. Countdown Logic
+        function updateTimer() {
+            const target = new Date("May 1, 2026 00:00:00").getTime();
+            const now = new Date().getTime();
+            const diff = target - now;
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+            document.getElementById("days").innerText = d.toString().padStart(2, '0');
+            document.getElementById("hours").innerText = h.toString().padStart(2, '0');
+            document.getElementById("minutes").innerText = m.toString().padStart(2, '0');
+            document.getElementById("seconds").innerText = s.toString().padStart(2, '0');
+        }
+        setInterval(updateTimer, 1000); updateTimer();
+
+        // 4. EmailJS & Toast Notification Logic
+        const btn = document.getElementById('button');
+        const toast = document.getElementById('toast');
+
+        function showNotification(msg, type) {
+            toast.innerText = msg;
+            toast.className = `show ${type}`;
+            setTimeout(() => { toast.className = ''; }, 4000);
+        }
+
+        document.getElementById('form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            btn.innerText = 'Sending...';
+            btn.disabled = true;
+
+            const serviceID = 'service_bwwidsa';
+            const templateID = 'template_a9jwr6n';
+
+            // 'this' refers to the form element, passing all named inputs to EmailJS
+            emailjs.sendForm(serviceID, templateID, this)
+                .then(() => {
+                    btn.innerText = 'Join The Wait-List';
+                    btn.disabled = false;
+                    showNotification('Welcome to the circle! Check your email.', 'success');
+                    this.reset();
+                }, (err) => {
+                    btn.innerText = 'Join The Wait-List';
+                    btn.disabled = false;
+                    showNotification('Oops! Connection error. Try again.', 'error');
+                    console.error(err);
+                });
+        });
+    </script>
+</body>
+</html>
